@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: phoenix
+      POSTGRES_USER: phoenix
+      POSTGRES_PASSWORD: phoenix
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    user: user
+    command: mix phx.server
+    volumes:
+      - .:/home/user/app
+    working_dir: /home/user/app
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
+
