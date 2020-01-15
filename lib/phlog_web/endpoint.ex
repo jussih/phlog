@@ -1,6 +1,8 @@
 defmodule PhlogWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :phlog
 
+  socket "/live", Phoenix.LiveView.Socket
+
   socket "/socket", PhlogWeb.UserSocket,
     websocket: true,
     longpoll: false

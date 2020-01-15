@@ -13,9 +13,15 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 ## Docker
 
+### How this project was created
+
 The project was initialized with the included docker configuration:
 * `docker-compose build`
 * `docker-compose run --no-deps app mix phx.new --app phlog --module Phlog .`
 
 **NOTE** the Dockerfile creates a user in the container. the UID and GID should
 match the host user values so files created will have proper ownership.
+
+### How to use
+
+Run `docker-compose up`.

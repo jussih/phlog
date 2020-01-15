@@ -15,7 +15,10 @@ config :phlog, PhlogWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "4l1Rnro+6qT2mADa5+ZPJKI1ZkSLgRCGCJfXmThHjceP0haNet1Q2EBvhyU1MXEn",
   render_errors: [view: PhlogWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Phlog.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Phlog.PubSub, adapter: Phoenix.PubSub.PG2],
+  live_view: [
+    signing_salt: "dev"
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
