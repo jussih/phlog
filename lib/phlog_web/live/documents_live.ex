@@ -2,7 +2,7 @@ defmodule PhlogWeb.DocumentsLive do
   use Phoenix.LiveView
   use Phoenix.HTML
 
-  alias Phlog.{Repository, Repo}
+  alias Phlog.Repository
   require Logger
 
   def render(assigns) do
@@ -32,24 +32,15 @@ defmodule PhlogWeb.DocumentsLive do
     }
   end
 
-  def handle_event("document_click" <> document_id, _payload, socket) do
-    Logger.debug(fn -> "Document clicked: #{document_id}" end)
-    {:noreply, assign(socket, :active_document, String.to_integer(document_id))}
-  end
-
-  def handle_event("keydown", key, socket) do
-    {:noreply, assign(socket, :active_document, get_active_document(key, socket))}
-  end
-
   def get_active_document(
     _key,
-    %Phoenix.LiveView.Socket{assigns: %{documents: []}} = socket
+    %Phoenix.LiveView.Socket{assigns: %{documents: []}}
   ) do
     nil
   end
   def get_active_document(
     key,
-    %Phoenix.LiveView.Socket{assigns: %{documents: documents, active_document: active_document}} = socket
+    %Phoenix.LiveView.Socket{assigns: %{documents: documents, active_document: active_document}}
   ) do
     case key["key"] do
       "ArrowUp" -> previous_document(documents, active_document).id
@@ -77,16 +68,24 @@ defmodule PhlogWeb.DocumentsLive do
     end
   end
 
+  def handle_event("keydown", key, socket) do
+    {:noreply, assign(socket, :active_document, get_active_document(key, socket))}
+  end
+
   def handle_event("filter_change", payload, socket) do
-    Logger.debug("Filter: #{payload["value"]}")
     {:noreply, assign(socket, :filter, payload["value"])}
   end
 
-  def handle_event(event, payload, socket) do
+  def handle_event("document_click" <> document_id, _payload, socket) do
+    Logger.debug(fn -> "Document clicked: #{document_id}" end)
+    {:noreply, assign(socket, :active_document, String.to_integer(document_id))}
+  end
+
+  def handle_event(_event, _payload, socket) do
     {:noreply, socket}
   end
 
-  def handle_params(params, uri, socket) do
+  def handle_params(_params, _uri, socket) do
     {:noreply, socket}
   end
 end
