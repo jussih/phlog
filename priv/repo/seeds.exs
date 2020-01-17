@@ -25,3 +25,9 @@ alias Phlog.Repository
   render_timestamp: DateTime.utc_now(),
   filename: "none.txt"
 })
+{:ok, %Document{}} = Repository.create_document(%{
+  html: "<div>Document3</div>",
+  title: "Document 3",
+  render_timestamp: DateTime.utc_now(),
+  filename: "none.txt"
+})

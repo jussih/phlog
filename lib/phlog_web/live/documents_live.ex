@@ -36,14 +36,39 @@ defmodule PhlogWeb.DocumentsLive do
   end
 
   def get_active_document(
+    _key,
+    %Phoenix.LiveView.Socket{assigns: %{documents: []}} = socket
+  ) do
+    nil
+  end
+  def get_active_document(
     key,
     %Phoenix.LiveView.Socket{assigns: %{documents: documents, active_document: active_document}} = socket
   ) do
-    active_idx = Enum.find_index(documents, fn d -> d.id == active_document end)
     case key["key"] do
-      "ArrowUp" -> Enum.at(documents, rem(active_idx - 1, Enum.count(documents))).id
-      "ArrowDown" -> Enum.at(documents, rem(active_idx + 1, Enum.count(documents))).id
+      "ArrowUp" -> previous_document(documents, active_document).id
+      "ArrowDown" -> next_document(documents, active_document).id
       _ -> active_document
+    end
+  end
+
+  def previous_document([], _), do: nil
+  def previous_document([head | []], _), do: head
+  def previous_document([head | tail], id) do
+    cond do
+      head.id == id -> head
+      hd(tail).id == id -> head
+      true -> previous_document(tail, id)
+    end
+  end
+
+  def next_document([], _), do: nil
+  def next_document([head | []], _), do: head
+  def next_document([head | tail], id) do
+    Logger.debug("head: #{head.id}, next: #{hd(tail).id}, id: #{id}")
+    cond do
+      head.id == id -> hd(tail)
+      true -> next_document(tail, id)
     end
   end
 
