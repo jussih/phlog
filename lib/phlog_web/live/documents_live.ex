@@ -6,9 +6,15 @@ defmodule PhlogWeb.DocumentsLive do
   require Logger
 
   def render(assigns) do
+    visible_documents =
+      case assigns.filter do
+        "" -> assigns.documents
+        _  -> Enum.filter(assigns.documents, fn doc -> String.contains?(doc.title, assigns.filter) end)
+      end
     ~L"""
     <div phx-keydown="keydown" phx-target="window">
-      <%= for document <- @documents do %>
+      <input phx-keyup="filter_change">
+      <%= for document <- visible_documents do %>
         <div class="<%= if document.id == @active_document do %>active<% end %>" phx-click="document_click<%= document.id %>">
           <b><%= document.title %></b>: <%= document.html %>
         </div>
@@ -20,6 +26,7 @@ defmodule PhlogWeb.DocumentsLive do
   def mount(_assigns, socket) do
     documents = Repository.list_repository_documents()
     {:ok, socket
+          |> assign(:filter, "")
           |> assign(:documents, documents)
           |> assign(:active_document, hd(documents).id)
     }
@@ -31,7 +38,6 @@ defmodule PhlogWeb.DocumentsLive do
   end
 
   def handle_event("keydown", key, socket) do
-    Logger.debug(fn -> "Key pressed #{inspect key}" end)
     {:noreply, assign(socket, :active_document, get_active_document(key, socket))}
   end
 
@@ -65,11 +71,15 @@ defmodule PhlogWeb.DocumentsLive do
   def next_document([], _), do: nil
   def next_document([head | []], _), do: head
   def next_document([head | tail], id) do
-    Logger.debug("head: #{head.id}, next: #{hd(tail).id}, id: #{id}")
     cond do
       head.id == id -> hd(tail)
       true -> next_document(tail, id)
     end
+  end
+
+  def handle_event("filter_change", payload, socket) do
+    Logger.debug("Filter: #{payload["value"]}")
+    {:noreply, assign(socket, :filter, payload["value"])}
   end
 
   def handle_event(event, payload, socket) do
