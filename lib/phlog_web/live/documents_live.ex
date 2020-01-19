@@ -12,14 +12,32 @@ defmodule PhlogWeb.DocumentsLive do
         _  -> Enum.filter(assigns.documents, fn doc -> String.contains?(doc.title, assigns.filter) end)
       end
     ~L"""
-    <div phx-keydown="keydown" phx-target="window">
-      <input phx-keyup="filter_change">
-      <%= for document <- visible_documents do %>
-        <div class="<%= if document.id == @active_document do %>active<% end %>" phx-click="document_click<%= document.id %>">
-          <b><%= document.title %></b>: <%= document.html %>
+    <section class="container">
+      <div class="columns">
+        <div class="column is-one-quarter"
+          <aside class="menu">
+            <p class="menu-label">
+              Documents
+            </p>
+            <div class="field">
+            <div class="control">
+            <input class="input" autofocus="true" placeholder="Search..." phx-keyup="filter_change">
+            </div>
+            </div>
+            <ul class="menu-list" phx-keydown="keydown" phx-target="window">
+              <%= for document <- visible_documents do %>
+                <li phx-click="document_click<%= document.id %>">
+                  <a class="<%= if document.id == @active_document do %>is-active<% end %>"><%= document.title %></a>
+                </li>
+              <% end %>
+            </ul>
+          </aside>
         </div>
-      <% end %>
-    </div>
+        <div class="column">
+          Placeholder
+        </div>
+      </div>
+    </section>
     """
   end
 
