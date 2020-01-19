@@ -3,6 +3,6 @@
 @import "./phoenix.css";
 @import "../node_modules/bulma/css/bulma.css";
 
-.active {
+.focused {
   background-color: #dedede;
 }

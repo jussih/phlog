@@ -14,7 +14,7 @@ defmodule PhlogWeb.DocumentsLive do
     ~L"""
     <section class="container">
       <div class="columns">
-        <div class="column is-one-quarter"
+        <div class="column is-one-quarter">
           <aside class="menu">
             <p class="menu-label">
               Documents
@@ -27,14 +27,18 @@ defmodule PhlogWeb.DocumentsLive do
             <ul class="menu-list" phx-keydown="keydown" phx-target="window">
               <%= for document <- visible_documents do %>
                 <li phx-click="document_click<%= document.id %>">
-                  <a class="<%= if document.id == @active_document do %>is-active<% end %>"><%= document.title %></a>
+                  <a
+                    class="<%= if document == @active_document do %>is-active<% end %> <%= if document.id == @focused_document_id do %> focused<% end %>"
+                  >
+                    <%= document.title %>
+                  </a>
                 </li>
               <% end %>
             </ul>
           </aside>
         </div>
         <div class="column">
-          Placeholder
+          <%= raw @active_document.html %>
         </div>
       </div>
     </section>
@@ -46,24 +50,25 @@ defmodule PhlogWeb.DocumentsLive do
     {:ok, socket
           |> assign(:filter, "")
           |> assign(:documents, documents)
-          |> assign(:active_document, hd(documents).id)
+          |> assign(:focused_document_id, hd(documents).id)
+          |> assign(:active_document, hd(documents))
     }
   end
 
-  def get_active_document(
+  def get_focus_document(
     _key,
     %Phoenix.LiveView.Socket{assigns: %{documents: []}}
   ) do
     nil
   end
-  def get_active_document(
+  def get_focus_document(
     key,
-    %Phoenix.LiveView.Socket{assigns: %{documents: documents, active_document: active_document}}
+    %Phoenix.LiveView.Socket{assigns: %{documents: documents, focused_document_id: focused_document}}
   ) do
     case key["key"] do
-      "ArrowUp" -> previous_document(documents, active_document).id
-      "ArrowDown" -> next_document(documents, active_document).id
-      _ -> active_document
+      "ArrowUp" -> previous_document(documents, focused_document).id
+      "ArrowDown" -> next_document(documents, focused_document).id
+      _ -> focused_document
     end
   end
 
@@ -86,8 +91,13 @@ defmodule PhlogWeb.DocumentsLive do
     end
   end
 
-  def handle_event("keydown", key, socket) do
-    {:noreply, assign(socket, :active_document, get_active_document(key, socket))}
+  def handle_event("keydown", %{"key" => "Enter"}, socket) do
+    active_document = Enum.find(socket.assigns.documents, fn d -> d.id == socket.assigns.focused_document_id end)
+    {:noreply, assign(socket, :active_document, active_document)}
+  end
+
+  def handle_event("keydown", %{"key" => keyname} = key, socket) when keyname == "ArrowUp" or keyname == "ArrowDown" do
+    {:noreply, assign(socket, :focused_document_id, get_focus_document(key, socket))}
   end
 
   def handle_event("filter_change", payload, socket) do
@@ -96,7 +106,11 @@ defmodule PhlogWeb.DocumentsLive do
 
   def handle_event("document_click" <> document_id, _payload, socket) do
     Logger.debug(fn -> "Document clicked: #{document_id}" end)
-    {:noreply, assign(socket, :active_document, String.to_integer(document_id))}
+    clicked_id = String.to_integer(document_id)
+    active_document = Enum.find(socket.assigns.documents, fn d -> d.id == clicked_id end)
+    {:noreply, socket
+               |> assign(:active_document, active_document)
+               |> assign(:focused_document_id, active_document.id)}
   end
 
   def handle_event(_event, _payload, socket) do
