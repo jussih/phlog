@@ -17,8 +17,7 @@ defmodule PhlogWeb.Router do
   scope "/", PhlogWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    live "/documents", DocumentsLive
+    live "/", DocumentsLive
   end
 
   # Other scopes may use custom stacks.
