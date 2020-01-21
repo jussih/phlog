@@ -44,7 +44,8 @@ defmodule Phlog.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, "~> 0.4.1"},
-      {:credo, "~> 1.1", only: :dev}
+      {:credo, "~> 1.1", only: :dev},
+      {:earmark, "~> 1.4.2"}
     ]
   end
 

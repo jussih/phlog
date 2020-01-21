@@ -3,7 +3,7 @@ defmodule Phlog.Repo.Migrations.CreateRepositoryDocuments do
 
   def change do
     create table(:repository_documents) do
-      add :html, :string
+      add :html, :text
       add :title, :string
       add :filename, :string
       add :render_timestamp, :utc_datetime

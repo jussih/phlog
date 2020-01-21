@@ -105,7 +105,6 @@ defmodule PhlogWeb.DocumentsLive do
   end
 
   def handle_event("document_click" <> document_id, _payload, socket) do
-    Logger.debug(fn -> "Document clicked: #{document_id}" end)
     clicked_id = String.to_integer(document_id)
     active_document = Enum.find(socket.assigns.documents, fn d -> d.id == clicked_id end)
     {:noreply, socket
