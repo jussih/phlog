@@ -7,7 +7,7 @@ defmodule PhlogWeb.DocumentsLive do
 
   def render(assigns) do
     ~L"""
-    <section class="container">
+    <section>
       <div class="columns">
         <div class="column is-one-quarter">
           <aside class="menu">
@@ -32,7 +32,7 @@ defmodule PhlogWeb.DocumentsLive do
             </ul>
           </aside>
         </div>
-        <div class="column">
+        <div class="column content is-three-quarters">
           <%= raw @active_document.html %>
         </div>
       </div>

@@ -6,3 +6,10 @@
 .focused {
   background-color: #dedede;
 }
+
+@media (max-width: 768px) {
+  aside.menu {
+    max-height: 50vh;
+    overflow: auto;
+  }
+}
