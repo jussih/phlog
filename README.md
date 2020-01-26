@@ -24,4 +24,19 @@ match the host user values so files created will have proper ownership.
 
 ### How to use
 
-Run `docker-compose up`.
+- `docker-compose up`
+- `docker-compose exec app npm install --prefix ./assets`
+- `docker-compose exec app mix ecto.migrate` to create database tables
+
+### Release
+- `docker-compose exec app mix deps.get --only prod`
+- `docker-compose exec -e MIX_ENV=prod app mix compile`
+- `docker-compose exec app npm run deploy --prefix ./assets`
+- `docker-compose exec app mix phx.digest`
+- `docker-compose exec -e MIX_ENV=prod app mix release`
+
+### Deploy
+- Move `_build/prod/rel/phlog/` to the server
+- Start app `bin/phlog start`
+- Run migrations `bin/phlog eval "Phlog.Release.migrate"`
+- Render docs to db `bin/phlog eval "Phlog.Release.render_docs"`

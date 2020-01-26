@@ -52,4 +52,5 @@ config :logger, level: :info
 
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
-import_config "prod.secret.exs"
+# Replaced by runtime config in releases.exs
+#import_config "prod.secret.exs"

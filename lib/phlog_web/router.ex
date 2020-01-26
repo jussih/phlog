@@ -14,7 +14,7 @@ defmodule PhlogWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", PhlogWeb do
+  scope "/phlog", PhlogWeb do
     pipe_through :browser
 
     live "/", DocumentsLive

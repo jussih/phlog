@@ -2,7 +2,7 @@
 # from environment variables. You can also hardcode secrets,
 # although such is generally not recommended and you have to
 # remember to add this file to your .gitignore.
-use Mix.Config
+import Config
 
 database_url =
   System.get_env("DATABASE_URL") ||
@@ -14,7 +14,7 @@ database_url =
 config :phlog, Phlog.Repo,
   # ssl: true,
   url: database_url,
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
 secret_key_base =
   System.get_env("SECRET_KEY_BASE") ||
@@ -30,13 +30,21 @@ signing_salt =
     You can generate one by calling: mix phx.gen.secret
     """
 
+hostname =
+  System.get_env("HOSTNAME") ||
+    raise """
+    environment variable HOSTNAME is missing.
+    """
+
 config :phlog, PhlogWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
-  secret_key_base: secret_key_base
+  url: [host: hostname, scheme: "https", port: 443, path: "/phlog/"],
+  secret_key_base: secret_key_base,
   live_view: [
     signing_salt: signing_salt
-  ]
-  
+  ],
+  server: true
+
 
 # ## Using releases (Elixir v1.9+)
 #

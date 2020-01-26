@@ -1,9 +1,9 @@
 defmodule PhlogWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :phlog
 
-  socket "/live", Phoenix.LiveView.Socket
+  socket "/phlog/live", Phoenix.LiveView.Socket
 
-  socket "/socket", PhlogWeb.UserSocket,
+  socket "/phlog/socket", PhlogWeb.UserSocket,
     websocket: true,
     longpoll: false
 
@@ -12,7 +12,7 @@ defmodule PhlogWeb.Endpoint do
   # You should set gzip to true if you are running phx.digest
   # when deploying your static files in production.
   plug Plug.Static,
-    at: "/",
+    at: "/phlog/",
     from: :phlog,
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
